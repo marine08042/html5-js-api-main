@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            cursor: url(./images/cursor.png);
+        }
+
+        canvas{
+            border: 2px solid gray;
+        }
+
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="300"></canvas>
+    <br>
+    <input type="color" id="strokeStyle" value="#000000">
+    <input type="number" id="lineWidth">
+
+    <button onclick="ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);">清除</button>
+
+    <button onclick="savePic()">儲存</button>
+    <script>
+        const myCanva = document.querySelector('#myCanva');
+        const ctx = myCanvas.getContext("2d");
+        // const strokeStyle = document.querySelector('#strokeStyle');
+        // const lineWidth = document.querySelector('#lineWidth')
+
+        // ctx.strokeStyle = strokeStyle.value;
+        // ctx.lineWidth = lineWidth.value;
+        let bX=0, bY=0;
+
+        const mDown = (e) =>{
+            bX = e.offsetX;
+            bY = e.offsetY;
+            myCanvas.addEventListener('mousemove', mMove);
+        }
+
+        const mUp = (e) =>{
+            myCanvas.removeEventListener('mousemove', mMove);
+        }
+
+        const mMove = (e) =>{
+            //設定一定要放這裡
+            ctx.strokeStyle = strokeStyle.value;
+            ctx.lineWidth = lineWidth.value;
+            ctx.beginPath();
+            ctx.moveTo(bX, bY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();//有他才能畫
+            
+             // 把目前位置當作下一條線的起始位置
+            bX = e.offsetX;
+            bY = e.offsetY;
+        }
+
+        myCanvas.addEventListener('mousedown', mDown);
+        window.addEventListener('mouseup', mUp);//這為什麼變window
+
+        function savePic(){
+            const imageData = myCanvas.toDataURL('image/png').replace("image/png", "image/octet-stream");
+
+            const a = document.createElement('a');
+            a.setAttribute('download', 'draw.png');
+            a.setAttribute('href', imageData);
+            a.click();
+      }
+    </script>
+</body>
+</html>
